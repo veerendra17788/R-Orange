@@ -120,6 +120,13 @@ function updateGrid() {
 
 // Save the current state
 function saveState() {
+    let saveack = document.getElementById("save-ack");
+    saveack.textContent = "Saved...";
+    saveack.style.fontSize = "10px";
+    saveack.style.color="green";
+    setTimeout(function() {
+        saveack.textContent = ""; // or "Save" or original text
+    }, 1000); 
     isSave = 1;
     updateArrayFromGrid();
     arrayOfStates.push(JSON.parse(JSON.stringify(array)));
