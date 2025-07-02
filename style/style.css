@@ -1,10 +1,13 @@
 body {
   font-family: cursive;
+  overflow: hidden;
   
 }
 
 .container {
-  margin: 0px 118px;
+  margin: auto;
+  height: 100vh;
+  width: 100vw;
   
 }
 
@@ -23,16 +26,19 @@ body {
 }
 
 #matrix{
-  margin: 20px;
+  margin: auto;
+  padding: 0px;
   display: grid;
   gap: 1px;
   justify-content: center; 
-  align-items: center;    
-  max-width: 80vw;
+  align-items: center; 
+  max-width: 80vw;  
+  max-height: 100vh; 
+  overflow: scroll;
 }
 
 .orange{
-  margin: 100px;
+  margin: 0px 100px;
   display: flex;
   justify-content: space-between;
 }

@@ -1,8 +1,10 @@
 // Global variables
 let arrayOfStates = [];
+let arrayOfTStates = [];
 let array = [];
 let rows, cols;
 let counter;
+let isSave=0;
 
 // Initialize the game
 function initializeGame() {
@@ -36,7 +38,7 @@ function initializeGame() {
 
     // Reset array of states
     arrayOfStates = [JSON.parse(JSON.stringify(array))];
-
+    
     setupEventListeners();
     return true;
 }
@@ -118,6 +120,7 @@ function updateGrid() {
 
 // Save the current state
 function saveState() {
+    isSave = 1;
     updateArrayFromGrid();
     arrayOfStates.push(JSON.parse(JSON.stringify(array)));
     console.log("State saved:", array);
@@ -125,12 +128,18 @@ function saveState() {
 
 // Go to the previous state
 function goToPreviousState() {
-    if (arrayOfStates.length > 1) {
-        arrayOfStates.pop(); // Remove the current state
+    if(counter <=0){
+        counter = document.getElementById("counter");
+        counter.textContent = "0";
+    }else if (arrayOfStates.length > 1) {
+        arrayOfTStates.push(arrayOfStates.pop()); // Remove the current state
         array = JSON.parse(JSON.stringify(arrayOfStates[arrayOfStates.length - 1]));
         updateGrid();
-        counter.textContent = (parseInt(counter.textContent) - 1).toString();
-        console.log("Reverted to previous state:", array);
+        counter = document.getElementById("counter");
+        if(counter.textContent > 0){
+            counter.textContent = (parseInt(counter.textContent) - 1).toString();
+            console.log("Reverted to previous state:", array);
+        }
     } else {
         console.log("No previous state available");
     }
@@ -138,31 +147,44 @@ function goToPreviousState() {
 
 // Go to the next state (simulate rot spreading)
 function goToNextState() {
-    let newArray = JSON.parse(JSON.stringify(array));
-    let changed = false;
-
-    for (let i = 0; i < rows; i++) {
-        for (let j = 0; j < cols; j++) {
-            if (array[i][j] === 2) { // Rotten orange
-                [[i-1, j], [i+1, j], [i, j-1], [i, j+1]].forEach(([ni, nj]) => {
-                    if (ni >= 0 && ni < rows && nj >= 0 && nj < cols && array[ni][nj] === 1) {
-                        newArray[ni][nj] = 2;
-                        changed = true;
-                    }
-                });
-            }
-        }
-    }
-    
-    if (changed) {
-        array = newArray;
+    if(isSave==0) {
+        alert("please save");
+        // return;
+    }else{
+    if(arrayOfTStates.length > 0){
+        arrayOfStates.push(arrayOfTStates.pop());
+        array = JSON.parse(JSON.stringify(arrayOfStates[arrayOfStates.length - 1]));
         updateGrid();
         counter.textContent = (parseInt(counter.textContent) + 1).toString();
-        arrayOfStates.push(JSON.parse(JSON.stringify(array)));
-        console.log("Advanced to next state:", array);
-    } else {
-        console.log("No changes in the next state");
+            
+    }else{
+        let newArray = JSON.parse(JSON.stringify(array));
+        let changed = false;
+
+        for (let i = 0; i < rows; i++) {
+            for (let j = 0; j < cols; j++) {
+                if (array[i][j] === 2) { // Rotten orange
+                    [[i-1, j], [i+1, j], [i, j-1], [i, j+1]].forEach(([ni, nj]) => {
+                        if (ni >= 0 && ni < rows && nj >= 0 && nj < cols && array[ni][nj] === 1) {
+                            newArray[ni][nj] = 2;
+                            changed = true;
+                        }
+                    });
+                }
+            }
+        }
+        
+        if (changed) {
+            array = newArray;
+            updateGrid();
+            counter.textContent = (parseInt(counter.textContent) + 1).toString();
+            arrayOfStates.push(JSON.parse(JSON.stringify(array)));
+            console.log("Advanced to next state:", array);
+        } else {
+            console.log("No changes in the next state");
+        }
     }
+}
 }
 
 // Event listener for form submission
